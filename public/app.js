@@ -10,12 +10,38 @@ async function fetchDashboardData() {
     const response = await fetch('/api/dashboard-data');
     dashboardData = await response.json();
     renderKpis(dashboardData.kpis);
+    renderMetadata(dashboardData.data_source_info);
+    renderRawPreview(dashboardData.raw_first_5);
     renderCharts(dashboardData);
     renderCityTable(dashboardData.city_performance);
     renderCuisineTable(dashboardData.cuisine_market_share);
   } catch (err) {
     console.error('Failed to load dashboard data:', err);
   }
+}
+
+function renderMetadata(info) {
+  if (!info) return;
+  if (document.getElementById('meta-source')) document.getElementById('meta-source').textContent = info.filename;
+  if (document.getElementById('meta-grain')) document.getElementById('meta-grain').textContent = info.grain;
+  if (document.getElementById('meta-records')) document.getElementById('meta-records').textContent = info.records.toLocaleString();
+  if (document.getElementById('meta-columns')) document.getElementById('meta-columns').textContent = info.columns;
+  if (document.getElementById('meta-date')) document.getElementById('meta-date').textContent = info.last_validated;
+}
+
+function renderRawPreview(rows) {
+  if (!Array.isArray(rows) || rows.length === 0) return;
+  const thRow = document.getElementById('raw-preview-th');
+  const tbody = document.getElementById('raw-preview-tb');
+  if (!thRow || !tbody) return;
+
+  const cols = Object.keys(rows[0]);
+  thRow.innerHTML = cols.map(c => `<th>${c}</th>`).join('');
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      ${cols.map(c => `<td>${r[c] !== null && r[c] !== undefined ? r[c] : ''}</td>`).join('')}
+    </tr>
+  `).join('');
 }
 
 function renderKpis(kpis) {

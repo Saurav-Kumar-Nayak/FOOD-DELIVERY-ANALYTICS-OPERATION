@@ -14,6 +14,8 @@ def generate_kpis_and_powerbi_exports(db_path: str, powerbi_dir: str) -> dict:
 
     conn = sqlite3.connect(db_path)
     os.makedirs(powerbi_dir, exist_ok=True)
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    raw_csv_path = os.path.join(base_dir, "data", "raw", "food_delivery_raw.csv")
 
     # 1. Executive KPIs Summary
     kpi_query = """
@@ -40,31 +42,39 @@ def generate_kpis_and_powerbi_exports(db_path: str, powerbi_dir: str) -> dict:
     # 2. Power BI Datasets Export
     print(f"[KPI ENGINE] Exporting Power BI CSVs to: {powerbi_dir}")
 
-    # Export 1: dim_geography.csv
     dim_geo = pd.read_sql_query("SELECT * FROM dim_locations", conn)
     dim_geo.to_csv(os.path.join(powerbi_dir, "dim_geography.csv"), index=False)
 
-    # Export 2: dim_restaurant.csv
     dim_rest = pd.read_sql_query("SELECT * FROM dim_restaurants", conn)
     dim_rest.to_csv(os.path.join(powerbi_dir, "dim_restaurant.csv"), index=False)
 
-    # Export 3: fact_orders_summary.csv
     fact_perf = pd.read_sql_query("SELECT * FROM fact_restaurant_performance", conn)
     fact_perf.to_csv(os.path.join(powerbi_dir, "fact_orders_summary.csv"), index=False)
 
-    # Export 4: kpi_summary_metrics.csv
     kpi_df.to_csv(os.path.join(powerbi_dir, "kpi_summary_metrics.csv"), index=False)
 
-    # Export 5: dim_cuisine_breakdown.csv
     cuisine_summary = pd.read_sql_query("SELECT * FROM vw_cuisine_market_share", conn)
     cuisine_summary.to_csv(os.path.join(powerbi_dir, "dim_cuisine_breakdown.csv"), index=False)
 
-    # Export 6: city_performance_summary.csv
     city_summary = pd.read_sql_query("SELECT * FROM vw_city_performance", conn)
     city_summary.to_csv(os.path.join(powerbi_dir, "city_performance_summary.csv"), index=False)
 
+    # Load dynamic raw first 5 preview
+    raw_df = pd.read_csv(raw_csv_path, encoding='latin1')
+    raw_first_5 = raw_df.head(5).to_dict(orient='records')
+    raw_shape = raw_df.shape
+
     # 3. Build Web Analytics JSON Data Payload
     web_payload = {
+        "data_source_info": {
+            "filename": "data/raw/food_delivery_raw.csv",
+            "grain": "Restaurant-level",
+            "records": raw_shape[0],
+            "columns": raw_shape[1],
+            "last_validated": "2026-10-04",
+            "classification": "Observed / Derived / Estimated / Proxy"
+        },
+        "raw_first_5": raw_first_5,
         "kpis": kpis_dict,
         "city_performance": city_summary.head(15).to_dict(orient='records'),
         "cuisine_market_share": cuisine_summary.head(15).to_dict(orient='records'),

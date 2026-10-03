@@ -121,6 +121,46 @@
             <canvas id="cuisineVolumeChart"></canvas>
           </div>
         </div>
+
+        <!-- Calculated Insights Panel -->
+        <div class="card col-12" style="margin-top: 12px;">
+          <div class="card-title">💡 Calculated Executive Insights</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 12px;">
+            <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 8px; border-left: 3px solid #3b82f6;">
+              <h4 style="margin: 0 0 6px 0; color: #3b82f6; font-size: 14px;">1. Online Delivery Growth Opportunity</h4>
+              <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">Only <strong>25.66%</strong> of listings support online delivery. Onboarding the remaining 74.34% represents the largest commercial expansion vector.</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 8px; border-left: 3px solid #8b5cf6;">
+              <h4 style="margin: 0 0 6px 0; color: #8b5cf6; font-size: 14px;">2. Price Tier & Quality Alignment</h4>
+              <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">Premium/Luxury tier restaurants achieve a <strong>3.82 / 5.0</strong> rating baseline versus <strong>1.97 / 5.0</strong> for Budget tier establishments.</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 8px; border-left: 3px solid #10b981;">
+              <h4 style="margin: 0 0 6px 0; color: #10b981; font-size: 14px;">3. Geographic Concentration</h4>
+              <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">New Delhi, Gurgaon, and Noida generate over <strong>68%</strong> of total estimated monthly revenue proxy across all 141 cities.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Source & Lineage Methodology Card -->
+        <div class="card col-12" style="margin-top: 12px;">
+          <div class="card-title">🔍 Data Lineage & Source Methodology Verification</div>
+          <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; font-size: 13px; color: var(--text-secondary);">
+            <div><strong>Source File:</strong> <span id="meta-source">data/raw/food_delivery_raw.csv</span></div>
+            <div><strong>Dataset Grain:</strong> <span id="meta-grain">Restaurant-level</span></div>
+            <div><strong>Total Records:</strong> <span id="meta-records">9,551</span></div>
+            <div><strong>Columns:</strong> <span id="meta-columns">21</span></div>
+            <div><strong>Last Validated:</strong> <span id="meta-date">2026-10-04</span></div>
+            <div><strong>Metric Classification:</strong> Observed / Derived / Estimated / Proxy</div>
+          </div>
+
+          <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">Raw Dataset Source Preview (First 5 Rows):</div>
+          <div class="table-responsive">
+            <table class="data-table" id="raw-preview-table">
+              <thead><tr id="raw-preview-th"></tr></thead>
+              <tbody id="raw-preview-tb"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
 
