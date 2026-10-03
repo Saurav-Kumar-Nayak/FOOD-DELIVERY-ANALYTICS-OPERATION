@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Delivery Operations Intelligence Platform</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- App Header -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="brand-icon">📊</div>
+        <div class="brand-title">
+          <h1>Food Delivery Operations Intelligence</h1>
+          <p>Enterprise Analytics & Multi-Dimensional Decision Suite</p>
+        </div>
+      </div>
+      <div class="header-status">
+        <div class="badge-live">
+          <span class="pulse-dot"></span>
+          Live Data Warehouse Connected (SQLite Star-Schema)
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('executive')">📊 Executive Overview</button>
+      <button class="tab-btn" onclick="switchTab('city')">🌆 Geographic Intelligence</button>
+      <button class="tab-btn" onclick="switchTab('cuisine')">🍱 Cuisine Unit Economics</button>
+      <button class="tab-btn" onclick="switchTab('sql')">⚡ Interactive SQL Explorer</button>
+      <button class="tab-btn" onclick="switchTab('powerbi')">📈 Power BI Export Center</button>
+    </div>
+
+    <!-- Executive KPI Grid -->
+    <div class="kpi-grid">
+      <div class="kpi-card" title="Directly observed count of unique restaurant profiles in the data warehouse.">
+        <div class="kpi-header">
+          <span class="kpi-title">Total Restaurants</span>
+          <span class="badge-tag badge-observed">Observed</span>
+        </div>
+        <div class="kpi-value" id="kpi-restaurants">9,551</div>
+        <div class="kpi-subtext">Across 141 Cities Globally</div>
+      </div>
+      <div class="kpi-card" title="Proxy model: Estimated monthly revenue based on votes, price range, and delivery flag. NOT actual financial ledger revenue.">
+        <div class="kpi-header">
+          <span class="kpi-title">Est. Monthly Revenue</span>
+          <span class="badge-tag badge-proxy">Proxy</span>
+        </div>
+        <div class="kpi-value" id="kpi-revenue">$15.4M</div>
+        <div class="kpi-subtext">Estimated Revenue Proxy</div>
+      </div>
+      <div class="kpi-card" title="Directly observed mean customer rating across all restaurants.">
+        <div class="kpi-header">
+          <span class="kpi-title">Avg Global Rating</span>
+          <span class="badge-tag badge-observed">Observed</span>
+        </div>
+        <div class="kpi-value" id="kpi-rating">2.67 / 5.0</div>
+        <div class="kpi-subtext">Across 1.41M Votes</div>
+      </div>
+      <div class="kpi-card" title="Derived calculation: (SUM(has_online_delivery) / COUNT(*)) * 100">
+        <div class="kpi-header">
+          <span class="kpi-title">Online Delivery Adoption</span>
+          <span class="badge-tag badge-derived">Derived</span>
+        </div>
+        <div class="kpi-value" id="kpi-delivery">25.66%</div>
+        <div class="kpi-subtext">Market Penetration Driver</div>
+      </div>
+      <div class="kpi-card" title="Derived calculation: (SUM(has_table_booking) / COUNT(*)) * 100">
+        <div class="kpi-header">
+          <span class="kpi-title">Table Booking Adoption</span>
+          <span class="badge-tag badge-derived">Derived</span>
+        </div>
+        <div class="kpi-value" id="kpi-booking">12.12%</div>
+        <div class="kpi-subtext">Premium Reservation Segment</div>
+      </div>
+    </div>
+
+    <!-- TAB 1: EXECUTIVE OVERVIEW -->
+    <div id="tab-executive" class="tab-content">
+      <div class="dashboard-grid">
+        <div class="card col-8">
+          <div class="card-title">
+            <span>Top City Markets by Estimated Revenue Proxy ($ USD)</span>
+            <span class="badge-tag badge-proxy" title="Derived surrogate model based on vote volume and price points">Proxy</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="cityRevenueChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card col-4">
+          <div class="card-title">
+            <span>Service Capability Share</span>
+            <span class="badge-tag badge-derived" title="Categorical breakdown of online delivery and table booking flags">Derived</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="serviceShareChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card col-6">
+          <div class="card-title">
+            <span>Price Category vs Rating Performance</span>
+            <span class="badge-tag badge-derived" title="Mean rating grouped by price range tier">Derived</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="priceRatingChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card col-6">
+          <div class="card-title">
+            <span>Top Primary Cuisines Volume Breakdown</span>
+            <span class="badge-tag badge-derived" title="Restaurant count grouped by primary cuisine string">Derived</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="cuisineVolumeChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: GEOGRAPHIC INTELLIGENCE -->
+    <div id="tab-city" class="tab-content" style="display: none;">
+      <div class="card col-12" style="margin-bottom: 24px;">
+        <div class="card-title">
+          <span>City Operations & Market Penetration Matrix</span>
+          <input type="text" id="city-search" class="table-search-input" placeholder="Search city..." onkeyup="filterCityTable()">
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="city-table">
+            <thead>
+              <tr>
+                <th>City <span class="header-tag">(Observed)</span></th>
+                <th>Restaurants <span class="header-tag">(Observed)</span></th>
+                <th>Avg Rating <span class="header-tag">(Observed)</span></th>
+                <th>Total Votes <span class="header-tag">(Observed)</span></th>
+                <th>Avg Cost USD <span class="header-tag">(Estimated)</span></th>
+                <th>Delivery Adoption <span class="header-tag">(Derived)</span></th>
+                <th>Est. Monthly Revenue <span class="header-tag">(Proxy)</span></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: CUISINE UNIT ECONOMICS -->
+    <div id="tab-cuisine" class="tab-content" style="display: none;">
+      <div class="card col-12">
+        <div class="card-title">
+          <span>Cuisine Category Market Share & Unit Performance</span>
+          <input type="text" id="cuisine-search" class="table-search-input" placeholder="Search cuisine..." onkeyup="filterCuisineTable()">
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="cuisine-table">
+            <thead>
+              <tr>
+                <th>Primary Cuisine <span class="header-tag">(Derived)</span></th>
+                <th>Restaurant Count <span class="header-tag">(Observed)</span></th>
+                <th>Total Votes <span class="header-tag">(Observed)</span></th>
+                <th>Avg Rating <span class="header-tag">(Observed)</span></th>
+                <th>Avg Cost USD <span class="header-tag">(Estimated)</span></th>
+                <th>Est. Monthly Revenue <span class="header-tag">(Proxy)</span></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: INTERACTIVE SQL EXPLORER -->
+    <div id="tab-sql" class="tab-content" style="display: none;">
+      <div class="card col-12">
+        <div class="card-title">SQL Analytics Console (Live SQLite Engine)</div>
+        
+        <div class="preset-query-bar">
+          <span class="preset-label">Query Presets:</span>
+          <button class="btn-preset" onclick="loadQueryPreset('top_revenue')">Top City Revenue (Proxy)</button>
+          <button class="btn-preset" onclick="loadQueryPreset('price_delivery')">Price Tier vs Delivery %</button>
+          <button class="btn-preset" onclick="loadQueryPreset('cuisine_density')">Cuisine Unit Economics</button>
+          <button class="btn-preset" onclick="loadQueryPreset('service_matrix')">Service Capability Matrix</button>
+        </div>
+
+        <div class="sql-input-group">
+          <textarea id="sql-query-input" class="sql-editor">SELECT l.city, COUNT(r.restaurant_id) as total_restaurants, ROUND(AVG(f.aggregate_rating), 2) as avg_rating, ROUND(SUM(f.est_monthly_revenue_usd), 2) as est_monthly_revenue_proxy FROM dim_restaurants r JOIN fact_restaurant_performance f ON r.restaurant_id = f.restaurant_id JOIN dim_locations l ON r.location_id = l.location_id GROUP BY l.city ORDER BY est_monthly_revenue_proxy DESC LIMIT 10;</textarea>
+        </div>
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+          <button class="btn-primary" onclick="runSqlQuery()">⚡ Execute Live SQL Query</button>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="sql-results-table">
+            <thead><tr id="sql-th-row"></tr></thead>
+            <tbody id="sql-tb-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: POWER BI EXPORT CENTER -->
+    <div id="tab-powerbi" class="tab-content" style="display: none;">
+      <div class="card col-12">
+        <div class="card-title">Power BI Ready Star Schema Datasets</div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">
+          Download pre-aggregated Star-Schema CSV files directly optimized for Power BI, Tableau, or Excel data ingestion.
+        </p>
+        <div class="downloads-grid">
+          <div class="download-card">
+            <h4>Fact Table: Orders & Performance</h4>
+            <p>fact_orders_summary.csv</p>
+            <a href="/api/download/fact_orders_summary.csv" class="btn-download">📥 Download CSV</a>
+          </div>
+          <div class="download-card">
+            <h4>Dim Table: Restaurants</h4>
+            <p>dim_restaurant.csv</p>
+            <a href="/api/download/dim_restaurant.csv" class="btn-download">📥 Download CSV</a>
+          </div>
+          <div class="download-card">
+            <h4>Dim Table: Geography</h4>
+            <p>dim_geography.csv</p>
+            <a href="/api/download/dim_geography.csv" class="btn-download">📥 Download CSV</a>
+          </div>
+          <div class="download-card">
+            <h4>KPI Summary Metrics</h4>
+            <p>kpi_summary_metrics.csv</p>
+            <a href="/api/download/kpi_summary_metrics.csv" class="btn-download">📥 Download CSV</a>
+          </div>
+          <div class="download-card">
+            <h4>Cuisine Market Breakdown</h4>
+            <p>dim_cuisine_breakdown.csv</p>
+            <a href="/api/download/dim_cuisine_breakdown.csv" class="btn-download">📥 Download CSV</a>
+          </div>
+          <div class="download-card">
+            <h4>City Performance Matrix</h4>
+            <p>city_performance_summary.csv</p>
+            <a href="/api/download/city_performance_summary.csv" class="btn-download">📥 Download CSV</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

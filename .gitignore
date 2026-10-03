@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node dependencies & logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Environment & Secret files
+.env
+.env.*
+
+# SQLite Lock / Journal files
+*.sqlite-journal
+*.db-wal
+*.db-shm
+
+# OS & IDE junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temporary audit scratch files
+*.tmp
+audit_*.py
+audit_*.json
