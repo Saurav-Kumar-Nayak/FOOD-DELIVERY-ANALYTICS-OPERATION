@@ -1,0 +1,14 @@
+{
+  "name": "food-delivery-analytics",
+  "version": "1.0.0",
+  "description": "Food Delivery Analytics & Operations Intelligence Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build-data": "python src/data_cleaning.py && python src/feature_engineering.py && python src/db_manager.py && python src/kpi_engine.py",
+    "test": "pytest tests/ -rA"
+  },
+  "author": "",
+  "license": "ISC"
+}

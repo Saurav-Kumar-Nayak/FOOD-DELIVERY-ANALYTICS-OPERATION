@@ -85,29 +85,35 @@ Located at `data/food_delivery.db`:
 
 ## 🚀 How to Run the Platform
 
-### 1. Execute Data Cleaning & Feature Engineering
+### Option 1: Single-Click Launcher (Recommended)
+Simply double-click or execute `start_server.bat` (or `start.bat`):
+```cmd
+start_server.bat
+```
+*(This automatically runs the ETL data pipeline, builds the SQLite warehouse & KPI engine, launches `http://localhost:3000` in your default browser, and starts the server).*
+
+---
+
+### Option 2: Command Line Startup
 ```bash
+npm start
+# or
+node server.js
+```
+
+---
+
+### Option 3: Manual Step-by-Step Pipeline Execution
+```bash
+# 1. Clean & Feature Engineer
 python src/data_cleaning.py
 python src/feature_engineering.py
-```
 
-### 2. Build Relational Database Warehouse
-```bash
+# 2. Build Database & KPI Payload
 python src/db_manager.py
-```
-
-### 3. Generate KPI Summary & Power BI Datasets
-```bash
 python src/kpi_engine.py
-```
 
-### 4. Run Automated Pytest Suite
-```bash
-python -m pytest tests/ -rA
-```
-
-### 5. Launch Enterprise Web Dashboard
-```bash
+# 3. Launch Web Server
 node server.js
 ```
 Open your browser at **`http://localhost:3000`**.
