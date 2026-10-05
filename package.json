@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
+    "build": "node -e \"const fs=require('fs'); fs.mkdirSync('public/api', {recursive:true}); fs.copyFileSync('data/processed/dashboard_payload.json', 'public/api/dashboard-data'); console.log('Static payload build step complete.');\"",
     "build-data": "python src/data_cleaning.py && python src/feature_engineering.py && python src/db_manager.py && python src/kpi_engine.py",
     "test": "pytest tests/ -rA"
   },
