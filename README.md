@@ -2,6 +2,9 @@
 
 An enterprise-grade Analytics and Operations Intelligence platform that transforms raw food delivery data into actionable multi-dimensional insights. The platform features an automated Python ETL data cleaning and domain feature engineering pipeline, an SQLite relational Star-Schema Data Warehouse, an automated KPI Engine, Power BI export datasets, an automated pytest suite, and a dark-navy Enterprise BI Operations Web Dashboard.
 
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Deployment%20Ready-success?logo=vercel)](https://github.com/Saurav-Kumar-Nayak/FOOD-DELIVERY-ANALYTICS-OPERATION)
+
+
 ---
 
 ## 📌 Executive Summary & Metric Classification
