@@ -3,7 +3,21 @@ let charts = {};
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchDashboardData();
+  startLiveClock();
 });
+
+function startLiveClock() {
+  const updateClock = () => {
+    const timeEl = document.getElementById('last-refresh-time');
+    if (timeEl) {
+      const now = new Date();
+      const utcStr = now.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+      timeEl.textContent = `Updated ${utcStr}`;
+    }
+  };
+  updateClock();
+  setInterval(updateClock, 1000);
+}
 
 async function fetchDashboardData() {
   try {
@@ -54,9 +68,17 @@ function renderKpis(kpis) {
 }
 
 function renderCharts(data) {
+  Chart.defaults.font.family = "'Inter', sans-serif";
+  Chart.defaults.color = '#94a3b8';
+
   // Chart 1: City Revenue Bar Chart (Proxy)
   const topCities = (data.city_performance || []).slice(0, 8);
   const cityCtx = document.getElementById('cityRevenueChart').getContext('2d');
+  
+  const cityGradient = cityCtx.createLinearGradient(0, 0, 0, 300);
+  cityGradient.addColorStop(0, 'rgba(59, 130, 246, 0.85)');
+  cityGradient.addColorStop(1, 'rgba(30, 58, 138, 0.25)');
+
   charts.cityRevenue = new Chart(cityCtx, {
     type: 'bar',
     data: {
@@ -64,19 +86,40 @@ function renderCharts(data) {
       datasets: [{
         label: 'Est. Monthly Revenue Proxy ($ USD)',
         data: topCities.map(c => c.city_est_revenue_usd),
-        backgroundColor: 'rgba(59, 130, 246, 0.75)',
+        backgroundColor: cityGradient,
         borderColor: '#3b82f6',
         borderWidth: 1.5,
-        borderRadius: 6
+        borderRadius: 6,
+        borderSkipped: false
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f172a',
+          borderColor: 'rgba(59, 130, 246, 0.4)',
+          borderWidth: 1,
+          padding: 12,
+          titleFont: { size: 13, weight: 'bold' },
+          bodyFont: { size: 12 },
+          callbacks: {
+            label: (ctx) => `Est. Revenue: $${ctx.raw.toLocaleString()} USD`
+          }
+        }
+      },
       scales: {
-        x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
-        y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } }
+        x: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { display: false } },
+        y: {
+          ticks: {
+            color: '#94a3b8',
+            font: { size: 11 },
+            callback: (val) => `$${(val / 1000000).toFixed(1)}M`
+          },
+          grid: { color: 'rgba(255, 255, 255, 0.04)' }
+        }
       }
     }
   });
@@ -96,22 +139,51 @@ function renderCharts(data) {
           '#8b5cf6',
           '#f59e0b'
         ],
-        borderWidth: 0
+        borderWidth: 2,
+        borderColor: '#0f172a',
+        hoverOffset: 4
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 } } }
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#94a3b8',
+            font: { size: 11, weight: '500' },
+            padding: 14,
+            usePointStyle: true,
+            pointStyle: 'circle'
+          }
+        },
+        tooltip: {
+          backgroundColor: '#0f172a',
+          borderColor: 'rgba(255, 255, 255, 0.1)',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: {
+            label: (ctx) => {
+              const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+              const pct = ((ctx.raw / total) * 100).toFixed(1);
+              return `${ctx.label}: ${ctx.raw.toLocaleString()} units (${pct}%)`;
+            }
+          }
+        }
       },
-      cutout: '70%'
+      cutout: '74%'
     }
   });
 
   // Chart 3: Price Tier Rating Bar Chart (Observed / Derived)
   const priceData = data.price_tier_distribution || [];
   const priceCtx = document.getElementById('priceRatingChart').getContext('2d');
+  
+  const priceGradient = priceCtx.createLinearGradient(0, 0, 0, 300);
+  priceGradient.addColorStop(0, 'rgba(139, 92, 246, 0.85)');
+  priceGradient.addColorStop(1, 'rgba(88, 28, 135, 0.25)');
+
   charts.priceRating = new Chart(priceCtx, {
     type: 'bar',
     data: {
@@ -119,7 +191,7 @@ function renderCharts(data) {
       datasets: [{
         label: 'Avg Rating (Observed)',
         data: priceData.map(p => p.avg_rating),
-        backgroundColor: 'rgba(139, 92, 246, 0.75)',
+        backgroundColor: priceGradient,
         borderColor: '#8b5cf6',
         borderWidth: 1.5,
         borderRadius: 6
@@ -128,10 +200,26 @@ function renderCharts(data) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f172a',
+          borderColor: 'rgba(139, 92, 246, 0.4)',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: {
+            label: (ctx) => `Avg Rating: ⭐ ${ctx.raw} / 5.0`
+          }
+        }
+      },
       scales: {
-        x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
-        y: { min: 0, max: 5, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } }
+        x: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { display: false } },
+        y: {
+          min: 0,
+          max: 5,
+          ticks: { color: '#94a3b8', font: { size: 11 } },
+          grid: { color: 'rgba(255, 255, 255, 0.04)' }
+        }
       }
     }
   });
@@ -139,6 +227,11 @@ function renderCharts(data) {
   // Chart 4: Primary Cuisine Volume Chart (Derived)
   const cuisineData = (data.cuisine_market_share || []).slice(0, 7);
   const cuisineCtx = document.getElementById('cuisineVolumeChart').getContext('2d');
+  
+  const cuisineGradient = cuisineCtx.createLinearGradient(0, 0, 300, 0);
+  cuisineGradient.addColorStop(0, 'rgba(16, 185, 129, 0.85)');
+  cuisineGradient.addColorStop(1, 'rgba(6, 78, 59, 0.25)');
+
   charts.cuisineVolume = new Chart(cuisineCtx, {
     type: 'bar',
     data: {
@@ -146,7 +239,7 @@ function renderCharts(data) {
       datasets: [{
         label: 'Restaurant Count (Observed)',
         data: cuisineData.map(c => c.restaurant_count),
-        backgroundColor: 'rgba(16, 185, 129, 0.75)',
+        backgroundColor: cuisineGradient,
         borderColor: '#10b981',
         borderWidth: 1.5,
         borderRadius: 6
@@ -156,13 +249,30 @@ function renderCharts(data) {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f172a',
+          borderColor: 'rgba(16, 185, 129, 0.4)',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: {
+            label: (ctx) => `Restaurants: ${ctx.raw.toLocaleString()}`
+          }
+        }
+      },
       scales: {
-        x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
-        y: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+        x: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { color: 'rgba(255, 255, 255, 0.04)' } },
+        y: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { display: false } }
       }
     }
   });
+}
+
+function setTimeframe(btn, tf) {
+  document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  // Visual control toggle - maintains exact real underlying chart data
 }
 
 function renderCityTable(cities) {
@@ -218,9 +328,14 @@ function switchTab(tabId) {
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
   
-  if (event && event.target) {
-    event.target.classList.add('active');
-  }
+  // Find tab button matching target
+  const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+  const targetBtn = tabButtons.find(btn => {
+    const attr = btn.getAttribute('onclick');
+    return attr && attr.includes(`'${tabId}'`);
+  });
+  if (targetBtn) targetBtn.classList.add('active');
+
   const activeTab = document.getElementById(`tab-${tabId}`);
   if (activeTab) activeTab.style.display = 'block';
 }

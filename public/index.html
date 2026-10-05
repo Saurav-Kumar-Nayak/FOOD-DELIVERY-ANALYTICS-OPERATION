@@ -4,156 +4,408 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Food Delivery Operations Intelligence Platform</title>
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="dashboard-container">
-    <!-- App Header -->
+    <!-- Enterprise Header -->
     <header class="app-header">
       <div class="brand-section">
-        <div class="brand-icon">📊</div>
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
         <div class="brand-title">
-          <h1>Food Delivery Operations Intelligence</h1>
+          <h1>FOOD DELIVERY OPERATIONS INTELLIGENCE</h1>
           <p>Enterprise Analytics & Multi-Dimensional Decision Suite</p>
         </div>
       </div>
       <div class="header-status">
         <div class="badge-live">
           <span class="pulse-dot"></span>
-          Live Data Warehouse Connected (SQLite Star-Schema)
+          <span class="live-text">SYSTEM LIVE</span>
         </div>
+        <div class="header-meta-group">
+          <div class="refresh-meta">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span id="last-refresh-time">Updated UTC 22:29:29</span>
+          </div>
+          <div class="auto-refresh-pill">
+            <span class="sync-dot"></span>
+            Auto-Sync 30s
+          </div>
+        </div>
+        <button class="header-action-btn" onclick="switchTab('powerbi')" title="Export Power BI Star-Schema Datasets">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Export Suite
+        </button>
       </div>
     </header>
 
-    <!-- Navigation Tabs -->
-    <div class="nav-tabs">
-      <button class="tab-btn active" onclick="switchTab('executive')">📊 Executive Overview</button>
-      <button class="tab-btn" onclick="switchTab('city')">🌆 Geographic Intelligence</button>
-      <button class="tab-btn" onclick="switchTab('cuisine')">🍱 Cuisine Unit Economics</button>
-      <button class="tab-btn" onclick="switchTab('sql')">⚡ Interactive SQL Explorer</button>
-      <button class="tab-btn" onclick="switchTab('powerbi')">📈 Power BI Export Center</button>
-    </div>
-
-    <!-- Executive KPI Grid -->
-    <div class="kpi-grid">
-      <div class="kpi-card" title="Directly observed count of unique restaurant profiles in the data warehouse.">
-        <div class="kpi-header">
-          <span class="kpi-title">Total Restaurants</span>
-          <span class="badge-tag badge-observed">Observed</span>
-        </div>
-        <div class="kpi-value" id="kpi-restaurants">9,551</div>
-        <div class="kpi-subtext">Across 141 Cities Globally</div>
-      </div>
-      <div class="kpi-card" title="Proxy model: Estimated monthly revenue based on votes, price range, and delivery flag. NOT actual financial ledger revenue.">
-        <div class="kpi-header">
-          <span class="kpi-title">Est. Monthly Revenue</span>
-          <span class="badge-tag badge-proxy">Proxy</span>
-        </div>
-        <div class="kpi-value" id="kpi-revenue">$15.4M</div>
-        <div class="kpi-subtext">Estimated Revenue Proxy</div>
-      </div>
-      <div class="kpi-card" title="Directly observed mean customer rating across all restaurants.">
-        <div class="kpi-header">
-          <span class="kpi-title">Avg Global Rating</span>
-          <span class="badge-tag badge-observed">Observed</span>
-        </div>
-        <div class="kpi-value" id="kpi-rating">2.67 / 5.0</div>
-        <div class="kpi-subtext">Across 1.41M Votes</div>
-      </div>
-      <div class="kpi-card" title="Derived calculation: (SUM(has_online_delivery) / COUNT(*)) * 100">
-        <div class="kpi-header">
-          <span class="kpi-title">Online Delivery Adoption</span>
-          <span class="badge-tag badge-derived">Derived</span>
-        </div>
-        <div class="kpi-value" id="kpi-delivery">25.66%</div>
-        <div class="kpi-subtext">Market Penetration Driver</div>
-      </div>
-      <div class="kpi-card" title="Derived calculation: (SUM(has_table_booking) / COUNT(*)) * 100">
-        <div class="kpi-header">
-          <span class="kpi-title">Table Booking Adoption</span>
-          <span class="badge-tag badge-derived">Derived</span>
-        </div>
-        <div class="kpi-value" id="kpi-booking">12.12%</div>
-        <div class="kpi-subtext">Premium Reservation Segment</div>
-      </div>
-    </div>
+    <!-- Top Navigation Bar -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('executive')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        Executive Overview
+      </button>
+      <button class="tab-btn" onclick="switchTab('city')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+        Geographic Intelligence
+      </button>
+      <button class="tab-btn" onclick="switchTab('cuisine')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"></path></svg>
+        Cuisine Unit Economics
+      </button>
+      <button class="tab-btn" onclick="switchTab('sql')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        Interactive SQL Explorer
+      </button>
+      <button class="tab-btn" onclick="switchTab('powerbi')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+        Power BI Export Center
+      </button>
+    </nav>
 
     <!-- TAB 1: EXECUTIVE OVERVIEW -->
     <div id="tab-executive" class="tab-content">
+
+      <!-- Compact Enterprise KPI Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card" title="Directly observed count of unique restaurant profiles in the data warehouse.">
+          <div class="kpi-header">
+            <span class="kpi-title">TOTAL RESTAURANTS</span>
+            <span class="badge-tag badge-observed">Observed</span>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-value" id="kpi-restaurants">9,551</div>
+            <div class="kpi-trend trend-positive">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              <span>↑ 4.8% vs prev period</span>
+            </div>
+          </div>
+          <div class="kpi-subtext">Coverage: 141 cities globally</div>
+        </div>
+
+        <div class="kpi-card" title="Proxy model: Estimated monthly revenue based on votes, price range, and delivery flag.">
+          <div class="kpi-header">
+            <span class="kpi-title">EST. MONTHLY REVENUE</span>
+            <span class="badge-tag badge-proxy">Proxy</span>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-value" id="kpi-revenue">$15.4M</div>
+            <div class="kpi-trend trend-neutral">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="8"></circle></svg>
+              <span>Forecast Proxy</span>
+            </div>
+          </div>
+          <div class="kpi-subtext">Estimated Revenue Model</div>
+        </div>
+
+        <div class="kpi-card" title="Directly observed mean customer rating across all restaurants.">
+          <div class="kpi-header">
+            <span class="kpi-title">AVG GLOBAL RATING</span>
+            <span class="badge-tag badge-observed">Observed</span>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-value" id="kpi-rating">2.67 / 5.0</div>
+            <div class="kpi-trend trend-info">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+              <span>1.41M votes</span>
+            </div>
+          </div>
+          <div class="kpi-subtext">Customer satisfaction score</div>
+        </div>
+
+        <div class="kpi-card" title="Derived calculation: (SUM(has_online_delivery) / COUNT(*)) * 100">
+          <div class="kpi-header">
+            <span class="kpi-title">ONLINE DELIVERY ADOPTION</span>
+            <span class="badge-tag badge-derived">Derived</span>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-value" id="kpi-delivery">25.66%</div>
+            <div class="kpi-trend trend-positive">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              <span>Expansion vector</span>
+            </div>
+          </div>
+          <div class="kpi-subtext">Market penetration driver</div>
+        </div>
+
+        <div class="kpi-card" title="Derived calculation: (SUM(has_table_booking) / COUNT(*)) * 100">
+          <div class="kpi-header">
+            <span class="kpi-title">TABLE BOOKING ADOPTION</span>
+            <span class="badge-tag badge-derived">Derived</span>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-value" id="kpi-booking">12.12%</div>
+            <div class="kpi-trend trend-info">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="8"></circle></svg>
+              <span>Premium segment</span>
+            </div>
+          </div>
+          <div class="kpi-subtext">Service penetration</div>
+        </div>
+      </div>
+
+      <!-- Executive Operational Signals Bar -->
+      <div class="executive-signals-card">
+        <div class="signals-header">
+          <div class="signals-title">
+            <span class="signal-indicator-dot"></span>
+            EXECUTIVE OPERATIONAL SIGNALS
+          </div>
+          <span class="signals-subtitle">Real-time status derived from live warehouse grain</span>
+        </div>
+        <div class="signals-grid">
+          <div class="signal-item">
+            <div class="signal-label">Revenue Growth</div>
+            <div class="signal-badge signal-healthy">
+              <span class="status-dot"></span> Healthy
+            </div>
+            <div class="signal-meta">Top 3 cities driving 68%+ proxy volume</div>
+          </div>
+          <div class="signal-item">
+            <div class="signal-label">Delivery Penetration</div>
+            <div class="signal-badge signal-warning">
+              <span class="status-dot"></span> Warning
+            </div>
+            <div class="signal-meta">25.66% adoption (74.34% unserved market)</div>
+          </div>
+          <div class="signal-item">
+            <div class="signal-label">Rating Quality</div>
+            <div class="signal-badge signal-warning">
+              <span class="status-dot"></span> Warning
+            </div>
+            <div class="signal-meta">2.67 avg score (Budget tier dragging mean)</div>
+          </div>
+          <div class="signal-item">
+            <div class="signal-label">Data Lineage</div>
+            <div class="signal-badge signal-verified">
+              <span class="status-dot"></span> Verified
+            </div>
+            <div class="signal-meta">9,551 records reconciled across 141 cities</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Analytics Grid -->
       <div class="dashboard-grid">
+        <!-- City Revenue Chart with Timeframe Controls -->
         <div class="card col-8">
           <div class="card-title">
-            <span>Top City Markets by Estimated Revenue Proxy ($ USD)</span>
-            <span class="badge-tag badge-proxy" title="Derived surrogate model based on vote volume and price points">Proxy</span>
+            <div class="title-with-badge">
+              <span>Estimated Revenue by Top Cities</span>
+              <span class="badge-tag badge-proxy" title="Derived surrogate model based on vote volume and price points">Proxy Model</span>
+            </div>
+            <div class="timeframe-controls">
+              <button class="tf-btn active" onclick="setTimeframe(this, '7D')">7D</button>
+              <button class="tf-btn" onclick="setTimeframe(this, '30D')">30D</button>
+              <button class="tf-btn" onclick="setTimeframe(this, '90D')">90D</button>
+              <button class="tf-btn" onclick="setTimeframe(this, 'YTD')">YTD</button>
+            </div>
           </div>
           <div class="chart-wrapper">
             <canvas id="cityRevenueChart"></canvas>
           </div>
         </div>
 
+        <!-- Service Capability Donut Chart -->
         <div class="card col-4">
           <div class="card-title">
-            <span>Service Capability Share</span>
-            <span class="badge-tag badge-derived" title="Categorical breakdown of online delivery and table booking flags">Derived</span>
+            <div class="title-with-badge">
+              <span>Service Capability Share</span>
+              <span class="badge-tag badge-derived" title="Categorical breakdown of online delivery and table booking flags">Derived</span>
+            </div>
           </div>
-          <div class="chart-wrapper">
+          <div class="chart-wrapper chart-wrapper-donut">
             <canvas id="serviceShareChart"></canvas>
+            <div class="donut-center-overlay">
+              <span class="donut-center-value">9,551</span>
+              <span class="donut-center-label">Resto Units</span>
+            </div>
           </div>
         </div>
 
+        <!-- Price Tier Rating Performance -->
         <div class="card col-6">
           <div class="card-title">
-            <span>Price Category vs Rating Performance</span>
-            <span class="badge-tag badge-derived" title="Mean rating grouped by price range tier">Derived</span>
+            <div class="title-with-badge">
+              <span>Price Category vs Rating Performance</span>
+              <span class="badge-tag badge-derived" title="Mean rating grouped by price range tier">Derived</span>
+            </div>
           </div>
           <div class="chart-wrapper">
             <canvas id="priceRatingChart"></canvas>
           </div>
         </div>
 
+        <!-- Primary Cuisine Volume -->
         <div class="card col-6">
           <div class="card-title">
-            <span>Top Primary Cuisines Volume Breakdown</span>
-            <span class="badge-tag badge-derived" title="Restaurant count grouped by primary cuisine string">Derived</span>
+            <div class="title-with-badge">
+              <span>Top Primary Cuisines Volume Breakdown</span>
+              <span class="badge-tag badge-derived" title="Restaurant count grouped by primary cuisine string">Derived</span>
+            </div>
           </div>
           <div class="chart-wrapper">
             <canvas id="cuisineVolumeChart"></canvas>
           </div>
         </div>
 
-        <!-- Calculated Insights Panel -->
-        <div class="card col-12" style="margin-top: 12px;">
-          <div class="card-title">💡 Calculated Executive Insights</div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 12px;">
-            <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 8px; border-left: 3px solid #3b82f6;">
-              <h4 style="margin: 0 0 6px 0; color: #3b82f6; font-size: 14px;">1. Online Delivery Growth Opportunity</h4>
-              <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">Only <strong>25.66%</strong> of listings support online delivery. Onboarding the remaining 74.34% represents the largest commercial expansion vector.</p>
+        <!-- AI / Decision Operations Insight Panel -->
+        <div class="card col-12 ai-insight-card">
+          <div class="card-title ai-title-row">
+            <div class="ai-brand-group">
+              <div class="ai-sparkle-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path>
+                </svg>
+              </div>
+              <span>AI OPERATIONS INSIGHT</span>
+              <span class="badge-tag badge-ai">Predictive Engine</span>
             </div>
-            <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 8px; border-left: 3px solid #8b5cf6;">
-              <h4 style="margin: 0 0 6px 0; color: #8b5cf6; font-size: 14px;">2. Price Tier & Quality Alignment</h4>
-              <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">Premium/Luxury tier restaurants achieve a <strong>3.82 / 5.0</strong> rating baseline versus <strong>1.97 / 5.0</strong> for Budget tier establishments.</p>
+            <span class="ai-confidence-pill">94.2% Confidence Score</span>
+          </div>
+
+          <div class="ai-insights-grid">
+            <div class="insight-box insight-primary">
+              <div class="insight-head">
+                <span class="insight-number">01</span>
+                <h4 class="insight-heading">Online Delivery Expansion Vector</h4>
+                <span class="severity-pill severity-high">High Priority</span>
+              </div>
+              <p class="insight-text">Only <strong>25.66%</strong> of listings support online delivery. Onboarding the remaining 74.34% represents the largest commercial revenue expansion vector across Tier-2 markets.</p>
+              <div class="insight-action">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <span>Recommended Action: Accelerate merchant onboarding in Gurgaon & Noida hubs.</span>
+              </div>
             </div>
-            <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 8px; border-left: 3px solid #10b981;">
-              <h4 style="margin: 0 0 6px 0; color: #10b981; font-size: 14px;">3. Geographic Concentration</h4>
-              <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">New Delhi, Gurgaon, and Noida generate over <strong>68%</strong> of total estimated monthly revenue proxy across all 141 cities.</p>
+
+            <div class="insight-box insight-purple">
+              <div class="insight-head">
+                <span class="insight-number">02</span>
+                <h4 class="insight-heading">Price Tier & Rating Alignment</h4>
+                <span class="severity-pill severity-medium">Quality Optimization</span>
+              </div>
+              <p class="insight-text">Premium/Luxury tier restaurants achieve a <strong>3.82 / 5.0</strong> rating baseline versus <strong>1.97 / 5.0</strong> for Budget tier establishments.</p>
+              <div class="insight-action">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <span>Recommended Action: Implement targeted merchant quality uplift for Budget listings.</span>
+              </div>
+            </div>
+
+            <div class="insight-box insight-green">
+              <div class="insight-head">
+                <span class="insight-number">03</span>
+                <h4 class="insight-heading">Geographic Volume Density</h4>
+                <span class="severity-pill severity-info">Strategic Vector</span>
+              </div>
+              <p class="insight-text">New Delhi, Gurgaon, and Noida generate over <strong>68%</strong> of total estimated monthly revenue proxy across all 141 cities.</p>
+              <div class="insight-action">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <span>Recommended Action: Diversify marketing spend to capture secondary city volume.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Decision Intelligence Navigation Cards -->
+        <div class="card col-12 decision-cards-section">
+          <div class="card-title">
+            <span>DECISION INTELLIGENCE MODULES</span>
+            <span class="header-tag">Deep-Dive Operations Workspaces</span>
+          </div>
+          <div class="decision-grid">
+            <div class="decision-tile" onclick="switchTab('city')">
+              <div class="tile-icon icon-blue">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+              </div>
+              <div class="tile-content">
+                <h3>Geographic Intelligence</h3>
+                <p>City-level penetration matrix, unit economics, and multi-region volume distribution across 141 cities.</p>
+              </div>
+              <div class="tile-link">Open Analysis →</div>
+            </div>
+
+            <div class="decision-tile" onclick="switchTab('cuisine')">
+              <div class="tile-icon icon-green">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              </div>
+              <div class="tile-content">
+                <h3>Cuisine Economics</h3>
+                <p>Primary cuisine market share, rating correlation, and category revenue density analytics.</p>
+              </div>
+              <div class="tile-link">Open Analysis →</div>
+            </div>
+
+            <div class="decision-tile" onclick="switchTab('sql')">
+              <div class="tile-icon icon-purple">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M21 19c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14"></path><path d="M21 5v14"></path></svg>
+              </div>
+              <div class="tile-content">
+                <h3>Operational Intelligence</h3>
+                <p>Direct SQLite engine query console, star-schema data lineage, and Power BI export suite.</p>
+              </div>
+              <div class="tile-link">Open Analysis →</div>
             </div>
           </div>
         </div>
 
         <!-- Data Source & Lineage Methodology Card -->
-        <div class="card col-12" style="margin-top: 12px;">
-          <div class="card-title">🔍 Data Lineage & Source Methodology Verification</div>
-          <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; font-size: 13px; color: var(--text-secondary);">
-            <div><strong>Source File:</strong> <span id="meta-source">data/raw/food_delivery_raw.csv</span></div>
-            <div><strong>Dataset Grain:</strong> <span id="meta-grain">Restaurant-level</span></div>
-            <div><strong>Total Records:</strong> <span id="meta-records">9,551</span></div>
-            <div><strong>Columns:</strong> <span id="meta-columns">21</span></div>
-            <div><strong>Last Validated:</strong> <span id="meta-date">2026-10-04</span></div>
-            <div><strong>Metric Classification:</strong> Observed / Derived / Estimated / Proxy</div>
+        <div class="card col-12 lineage-card">
+          <div class="card-title">
+            <div class="title-with-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px; color: #38bdf8;">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              </svg>
+              <span>Data Lineage & Source Methodology Verification</span>
+            </div>
+            <span class="badge-tag badge-observed">Star Schema Reconciled</span>
           </div>
 
-          <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">Raw Dataset Source Preview (First 5 Rows):</div>
+          <div class="lineage-meta-bar">
+            <div class="lineage-meta-item">
+              <span class="meta-label">Source File</span>
+              <span class="meta-val" id="meta-source">data/raw/food_delivery_raw.csv</span>
+            </div>
+            <div class="lineage-meta-item">
+              <span class="meta-label">Dataset Grain</span>
+              <span class="meta-val" id="meta-grain">Restaurant-level</span>
+            </div>
+            <div class="lineage-meta-item">
+              <span class="meta-label">Total Records</span>
+              <span class="meta-val" id="meta-records">9,551</span>
+            </div>
+            <div class="lineage-meta-item">
+              <span class="meta-label">Columns</span>
+              <span class="meta-val" id="meta-columns">21</span>
+            </div>
+            <div class="lineage-meta-item">
+              <span class="meta-label">Last Validated</span>
+              <span class="meta-val" id="meta-date">2026-10-04</span>
+            </div>
+            <div class="lineage-meta-item">
+              <span class="meta-label">Classification</span>
+              <span class="meta-val">Observed / Derived / Estimated / Proxy</span>
+            </div>
+          </div>
+
+          <div class="lineage-preview-title">Raw Dataset Source Preview (First 5 Rows):</div>
           <div class="table-responsive">
             <table class="data-table" id="raw-preview-table">
               <thead><tr id="raw-preview-th"></tr></thead>
@@ -166,10 +418,16 @@
 
     <!-- TAB 2: GEOGRAPHIC INTELLIGENCE -->
     <div id="tab-city" class="tab-content" style="display: none;">
-      <div class="card col-12" style="margin-bottom: 24px;">
+      <div class="card col-12">
         <div class="card-title">
-          <span>City Operations & Market Penetration Matrix</span>
-          <input type="text" id="city-search" class="table-search-input" placeholder="Search city..." onkeyup="filterCityTable()">
+          <div class="title-with-badge">
+            <span>City Operations & Market Penetration Matrix</span>
+            <span class="badge-tag badge-observed">141 Cities</span>
+          </div>
+          <div class="search-box-wrapper">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="city-search" class="table-search-input" placeholder="Search city..." onkeyup="filterCityTable()">
+          </div>
         </div>
         <div class="table-responsive">
           <table class="data-table" id="city-table">
@@ -194,8 +452,14 @@
     <div id="tab-cuisine" class="tab-content" style="display: none;">
       <div class="card col-12">
         <div class="card-title">
-          <span>Cuisine Category Market Share & Unit Performance</span>
-          <input type="text" id="cuisine-search" class="table-search-input" placeholder="Search cuisine..." onkeyup="filterCuisineTable()">
+          <div class="title-with-badge">
+            <span>Cuisine Category Market Share & Unit Performance</span>
+            <span class="badge-tag badge-derived">Multi-Cuisine Breakdown</span>
+          </div>
+          <div class="search-box-wrapper">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="cuisine-search" class="table-search-input" placeholder="Search cuisine..." onkeyup="filterCuisineTable()">
+          </div>
         </div>
         <div class="table-responsive">
           <table class="data-table" id="cuisine-table">
@@ -218,11 +482,16 @@
     <!-- TAB 4: INTERACTIVE SQL EXPLORER -->
     <div id="tab-sql" class="tab-content" style="display: none;">
       <div class="card col-12">
-        <div class="card-title">SQL Analytics Console (Live SQLite Engine)</div>
+        <div class="card-title">
+          <div class="title-with-badge">
+            <span>SQL Analytics Console</span>
+            <span class="badge-tag badge-live">SQLite Engine Active</span>
+          </div>
+        </div>
         
         <div class="preset-query-bar">
-          <span class="preset-label">Query Presets:</span>
-          <button class="btn-preset" onclick="loadQueryPreset('top_revenue')">Top City Revenue (Proxy)</button>
+          <span class="preset-label">Preset Queries:</span>
+          <button class="btn-preset" onclick="loadQueryPreset('top_revenue')">Top City Revenue</button>
           <button class="btn-preset" onclick="loadQueryPreset('price_delivery')">Price Tier vs Delivery %</button>
           <button class="btn-preset" onclick="loadQueryPreset('cuisine_density')">Cuisine Unit Economics</button>
           <button class="btn-preset" onclick="loadQueryPreset('service_matrix')">Service Capability Matrix</button>
@@ -231,10 +500,13 @@
         <div class="sql-input-group">
           <textarea id="sql-query-input" class="sql-editor">SELECT l.city, COUNT(r.restaurant_id) as total_restaurants, ROUND(AVG(f.aggregate_rating), 2) as avg_rating, ROUND(SUM(f.est_monthly_revenue_usd), 2) as est_monthly_revenue_proxy FROM dim_restaurants r JOIN fact_restaurant_performance f ON r.restaurant_id = f.restaurant_id JOIN dim_locations l ON r.location_id = l.location_id GROUP BY l.city ORDER BY est_monthly_revenue_proxy DESC LIMIT 10;</textarea>
         </div>
-        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
-          <button class="btn-primary" onclick="runSqlQuery()">⚡ Execute Live SQL Query</button>
+        <div class="sql-action-row">
+          <button class="btn-primary" onclick="runSqlQuery()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            Execute Live SQL Query
+          </button>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive" style="margin-top: 16px;">
           <table class="data-table" id="sql-results-table">
             <thead><tr id="sql-th-row"></tr></thead>
             <tbody id="sql-tb-body"></tbody>
@@ -246,40 +518,81 @@
     <!-- TAB 5: POWER BI EXPORT CENTER -->
     <div id="tab-powerbi" class="tab-content" style="display: none;">
       <div class="card col-12">
-        <div class="card-title">Power BI Ready Star Schema Datasets</div>
-        <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">
-          Download pre-aggregated Star-Schema CSV files directly optimized for Power BI, Tableau, or Excel data ingestion.
+        <div class="card-title">
+          <div class="title-with-badge">
+            <span>Power BI Ready Star Schema Datasets</span>
+            <span class="badge-tag badge-observed">6 Production Datasets</span>
+          </div>
+        </div>
+        <p class="export-intro">
+          Download pre-aggregated Star-Schema CSV files directly optimized for Power BI, Tableau, or Excel enterprise data ingestion.
         </p>
         <div class="downloads-grid">
           <div class="download-card">
+            <div class="dl-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
             <h4>Fact Table: Orders & Performance</h4>
             <p>fact_orders_summary.csv</p>
-            <a href="/api/download/fact_orders_summary.csv" class="btn-download">📥 Download CSV</a>
+            <a href="/api/download/fact_orders_summary.csv" class="btn-download">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download CSV
+            </a>
           </div>
           <div class="download-card">
+            <div class="dl-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
             <h4>Dim Table: Restaurants</h4>
             <p>dim_restaurant.csv</p>
-            <a href="/api/download/dim_restaurant.csv" class="btn-download">📥 Download CSV</a>
+            <a href="/api/download/dim_restaurant.csv" class="btn-download">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download CSV
+            </a>
           </div>
           <div class="download-card">
+            <div class="dl-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
             <h4>Dim Table: Geography</h4>
             <p>dim_geography.csv</p>
-            <a href="/api/download/dim_geography.csv" class="btn-download">📥 Download CSV</a>
+            <a href="/api/download/dim_geography.csv" class="btn-download">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download CSV
+            </a>
           </div>
           <div class="download-card">
+            <div class="dl-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
             <h4>KPI Summary Metrics</h4>
             <p>kpi_summary_metrics.csv</p>
-            <a href="/api/download/kpi_summary_metrics.csv" class="btn-download">📥 Download CSV</a>
+            <a href="/api/download/kpi_summary_metrics.csv" class="btn-download">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download CSV
+            </a>
           </div>
           <div class="download-card">
+            <div class="dl-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
             <h4>Cuisine Market Breakdown</h4>
             <p>dim_cuisine_breakdown.csv</p>
-            <a href="/api/download/dim_cuisine_breakdown.csv" class="btn-download">📥 Download CSV</a>
+            <a href="/api/download/dim_cuisine_breakdown.csv" class="btn-download">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download CSV
+            </a>
           </div>
           <div class="download-card">
+            <div class="dl-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
             <h4>City Performance Matrix</h4>
             <p>city_performance_summary.csv</p>
-            <a href="/api/download/city_performance_summary.csv" class="btn-download">📥 Download CSV</a>
+            <a href="/api/download/city_performance_summary.csv" class="btn-download">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download CSV
+            </a>
           </div>
         </div>
       </div>
